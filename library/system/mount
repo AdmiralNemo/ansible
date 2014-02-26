@@ -202,10 +202,15 @@ def mount(module, **kwargs):
     mount_bin = module.get_bin_path('mount')
 
     name = kwargs['name']
+    src = kwargs['src']
+    fstype = kwargs['fstype']
     if os.path.ismount(name):
         cmd = [ mount_bin , '-o', 'remount', name ]
     else:
-        cmd = [ mount_bin, name ]
+        cmd = [ mount_bin, '-t', fstype ]
+        if 'opts' in kwargs:
+            cmd += [ '-o', kwargs['opts'] ]
+        cmd += [ src, name ]
 
     rc, out, err = module.run_command(cmd)
     if rc == 0:
